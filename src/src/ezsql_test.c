@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "ezutil.h"
 #include "ezsql.h"
 
 int main (int argc, char **argv)
