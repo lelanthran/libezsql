@@ -14,7 +14,7 @@ void ezutil_diagnostic (const char *srcfile,
 
    fmts = va_arg (ap, const char *);
 
-   fprintf (stderr, "[%s][%s:%i]", build_id, srcfile, line);
+   fprintf (stderr, "[%s][%s:%i] | ", build_id, srcfile, line);
    vfprintf (stderr, fmts, ap);
 
    va_end (ap);

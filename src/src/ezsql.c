@@ -10,6 +10,12 @@
 
 struct ezsql_t {
    void *libh;
+
+   // All the functions that must be defined by the plugin
+#define SYMB_NAME       ("plugin_name")
+   const char *fptr_name;
+#define SYMB_VERSION    ("plugin_version")
+   const char *fptr_version;
 };
 
 ezsql_t *ezsql_load (const char *plugin_so)
@@ -27,6 +33,17 @@ ezsql_t *ezsql_load (const char *plugin_so)
       PRINTF ("Error loading [%s]: %s\n", plugin_so, dlerror ());
       goto errorexit;
    }
+
+#define LOAD_SYMBOL(dst,name) \
+   if (!(ret->dst = dlsym (ret->libh, name))) { \
+      PRINTF ("Failed to find symbol [%s] in plugin [%s]\n", name, plugin_so); \
+      goto errorexit; \
+   } \
+
+   LOAD_SYMBOL (fptr_name, SYMB_NAME);
+   LOAD_SYMBOL (fptr_version, SYMB_VERSION);
+
+#undef LOAD_SYMBOL
 
    error = true;
 errorexit:
