@@ -8,6 +8,9 @@ typedef struct ezsql_t ezsql_t;
 extern "C" {
 #endif
 
+   ezsql_t *ezsql_load (const char *plugin_so);
+   void ezsql_unload (ezsql_t *handle);
+
 
 #ifdef __cplusplus
 };
