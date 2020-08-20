@@ -9,13 +9,23 @@
 #include "ezsql.h"
 
 struct ezsql_t {
+   // The librrary handle
    void *libh;
+
+   // The opaque pointer to the db implementation
+   void *dbconn;
 
    // All the functions that must be defined by the plugin
 #define SYMB_NAME       ("plugin_name")
-   const char *fptr_name;
+   const char * (*fptr_name) (void);
+
 #define SYMB_VERSION    ("plugin_version")
-   const char *fptr_version;
+   const char * (*fptr_version) (void);
+
+#define SYMB_CONNECT    ("plugin_connect")
+   void *(*fptr_connect) (const char *host, uint16_t port,
+                          const char *username, const char *password,
+                          const char *database);
 };
 
 ezsql_t *ezsql_load (const char *plugin_so)
@@ -42,10 +52,11 @@ ezsql_t *ezsql_load (const char *plugin_so)
 
    LOAD_SYMBOL (fptr_name, SYMB_NAME);
    LOAD_SYMBOL (fptr_version, SYMB_VERSION);
+   LOAD_SYMBOL (fptr_connect, SYMB_CONNECT);
 
 #undef LOAD_SYMBOL
 
-   error = true;
+   error = false;
 errorexit:
    if (error) {
       ezsql_unload (ret);
@@ -56,7 +67,30 @@ errorexit:
 
 void ezsql_unload (ezsql_t *handle)
 {
+   if (!handle)
+      return;
 
+   if (handle->libh)
+      dlclose (handle->libh);
+
+   free (handle);
+}
+
+const char *ezsql_plugin_name (ezsql_t *handle)
+{
+   return handle->fptr_name ();
+}
+
+const char *ezsql_plugin_version (ezsql_t *handle)
+{
+   return handle->fptr_version ();
+}
+
+void *ezsql_connect (ezsql_t *handle, const char *host, uint16_t port,
+                                      const char *username, const char *password,
+                                      const char *database)
+{
+   return handle->dbconn = handle->fptr_connect (host, port, username, password, database);
 }
 
 

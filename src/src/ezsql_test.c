@@ -20,6 +20,14 @@ int main (int argc, char **argv)
       goto errorexit;
    }
 
+   PRINTF ("Loaded plugin [%s] [%s]\n", ezsql_plugin_name (handle),
+                                        ezsql_plugin_version (handle));
+
+   if (!(ezsql_connect (handle, "localhost", 5432, "lelanthran", "a", "lelanthran"))) {
+      PRINTF ("Unable to connect to test database\n");
+      goto errorexit;
+   }
+
    ret = EXIT_SUCCESS;
 
 errorexit:
