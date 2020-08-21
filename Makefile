@@ -7,6 +7,9 @@ ifndef PLUGINS
 $(warning No plugins selected, building only library)
 endif
 
+ifeq ($(PLUGINS),all)
+PLUGINS=dummy_plugin
+endif
 # ######################################################################
 # Some housekeeping to determine if we are running on a POSIX
 # platform or on Windows
@@ -67,7 +70,7 @@ help:
 	@$(ECHO) "Usage: PLUGINS=<list of plugins> make <target>"
 	@$(ECHO) ""
 	@$(ECHO) "   The library is always built. Only the plugins that are"
-	@$(ECHO) "specified are built.  The plugin name ' all' is shorthand"
+	@$(ECHO) "specified are built.  The plugin name 'all' is short-hand"
 	@$(ECHO) "for specifying all plugins in this repository."
 	@$(ECHO) ""
 	@$(ECHO) "Possible targets:"
