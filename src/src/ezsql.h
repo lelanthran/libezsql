@@ -16,9 +16,10 @@ extern "C" {
 
    const char *ezsql_plugin_name (ezsql_t *handle);
    const char *ezsql_plugin_version (ezsql_t *handle);
-   void *ezsql_connect (ezsql_t *handle, const char *host, uint16_t port,
-                                         const char *username, const char *password,
-                                         const char *database);
+   void *ezsql_connect (ezsql_t *handle, const char *ez_path,
+                                         const char *ez_host, uint16_t ez_port,
+                                         const char *ez_username, const char *ez_password,
+                                         const char *ez_database);
 
 #ifdef __cplusplus
 };

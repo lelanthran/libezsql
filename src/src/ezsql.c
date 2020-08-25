@@ -23,9 +23,10 @@ struct ezsql_t {
    const char * (*fptr_version) (void);
 
 #define SYMB_CONNECT    ("plugin_connect")
-   void *(*fptr_connect) (const char *host, uint16_t port,
-                          const char *username, const char *password,
-                          const char *database);
+   void *(*fptr_connect) (const char *ez_path,
+                          const char *ez_host, uint16_t ez_port,
+                          const char *ez_username, const char *ez_password,
+                          const char *ez_database);
 };
 
 ezsql_t *ezsql_load (const char *plugin_so)
@@ -86,11 +87,15 @@ const char *ezsql_plugin_version (ezsql_t *handle)
    return handle->fptr_version ();
 }
 
-void *ezsql_connect (ezsql_t *handle, const char *host, uint16_t port,
-                                      const char *username, const char *password,
-                                      const char *database)
+void *ezsql_connect (ezsql_t *handle, const char *ez_path,
+                                      const char *ez_host, uint16_t ez_port,
+                                      const char *ez_username, const char *ez_password,
+                                      const char *ez_database)
 {
-   return handle->dbconn = handle->fptr_connect (host, port, username, password, database);
+   return handle->dbconn = handle->fptr_connect (ez_path,
+                                                 ez_host, ez_port,
+                                                 ez_username, ez_password,
+                                                 ez_database);
 }
 
 
