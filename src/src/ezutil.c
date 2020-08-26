@@ -1,8 +1,11 @@
 #include <stdarg.h>
+#include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #include "ezutil.h"
+#include "ezplatform.h"
 
 #include "ds_str.h"
 
@@ -80,7 +83,7 @@ bool ezutil_parse_connection_string (const char *connstring)
       if (delim && *delim == 0)
          *delim = '=';
 
-      setenv (name, value, 1);
+      ezplatform_setenv (name, value, 1);
    }
 
    error = false;

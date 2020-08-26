@@ -105,5 +105,8 @@ void *ezsql_connect (ezsql_t *handle, const char *ez_path,
 
 void ezsql_disconnect (ezsql_t *handle)
 {
+   if (!handle)
+      return;
+
    handle->fptr_disconnect (handle->dbconn);
 }

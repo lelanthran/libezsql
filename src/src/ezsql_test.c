@@ -7,6 +7,7 @@
 
 int main (int argc, char **argv)
 {
+   (void)argc;
    int ret = EXIT_FAILURE;
    ezsql_t *handle = NULL;
 
