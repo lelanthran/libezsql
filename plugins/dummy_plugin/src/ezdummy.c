@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 
+#include "ezsql.h"
+
 #include "ezdummy.h"
 
 #include "ds_str.h"
@@ -60,6 +62,18 @@ static struct dummy_db_t *dummy_new (const char *path,
    return ret;
 }
 
+int plugin_last_errcode (void *handle)
+{
+   PRINTF ("Returning dummy errcode\n");
+   return 42;
+}
+
+const char *plugin_last_errmsg (void *handle)
+{
+   PRINTF ("Returning dummy errmsg\n");
+   return "So long, and thanks for all the fish!";
+}
+
 const char *plugin_name (void)
 {
    PRINTF ("Returning a plugin name\n");
@@ -93,3 +107,30 @@ void plugin_disconnect (void *handle)
    PRINTF ("Disconnecting dummy database\n");
    dummy_del (tmp);
 }
+
+void *plugin_exec (void *handle, const char            *stmt,
+                                 size_t                 nparams,
+                                 enum ezsql_coltype_t  *param_types,
+                                 void                 **params)
+{
+   PRINTF ("Returning handle to const char, as exec_result\n");
+}
+
+void plugin_res_del (void *result)
+{
+   PRINTF ("Deleting result_t handle\n");
+}
+
+bool plugin_res_bind (void *result, size_t                 nfields,
+                                    enum ezsql_coltype_t  *field_types,
+                                    void                 **fields)
+{
+   static int setnum = 3;
+   if (setnum < 0)
+      return 0;
+
+   PRINTF ("Returning a row of results set [%i]\n", setnum);
+   return setnum--;
+}
+
+

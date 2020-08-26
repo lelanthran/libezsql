@@ -50,7 +50,10 @@ int main (int argc, char **argv)
 
    ret = EXIT_SUCCESS;
 
-   errorexit:
+errorexit:
+   PRINTF ("Last error: [%i:%s]\n", ezsql_last_errcode (handle),
+                                    ezsql_last_errmsg (handle));
+
    ezsql_disconnect (handle);
    ezsql_unload (handle);
    return ret;

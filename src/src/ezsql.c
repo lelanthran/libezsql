@@ -31,7 +31,53 @@ struct ezsql_t {
 #define SYMB_DISCONNECT ("plugin_disconnect")
    void (*fptr_disconnect) (void *handle);
 
+#define SYMB_LAST_ERRCODE ("plugin_last_errcode")
+   int (*fptr_last_errcode) (void *handle);
+
+#define SYMB_LAST_ERRMSG ("plugin_last_errmsg")
+   const char *(*fptr_last_errmsg) (void *handle);
+
+#define SYMB_EXEC ("plugin_exec")
+   void * (*fptr_exec) (void *handle, const char           *stmt,
+                                      size_t                nparams,
+                                      enum ezsql_coltype_t *param_types,
+                                      void                **params);
+
+#define SYMB_RES_DEL ("plugin_res_del")
+   void (*fptr_res_del) (void *result);
+
+#define SYMB_RES_BIND ("plugin_res_bind")
+   int (*fptr_res_bind) (void *result, size_t nfields,
+                                       enum ezsql_coltype_t *field_types,
+                                       void                **fields);
+
 };
+
+struct ezsql_result_t {
+   ezsql_t *handle;
+   void    *result;
+};
+
+static void res_del (ezsql_result_t *res)
+{
+   if (res) {
+      res->handle->fptr_res_del (res->result);
+      free (res);
+   }
+}
+
+static ezsql_result_t *res_new (void *handle, void *result)
+{
+   ezsql_result_t *ret = NULL;
+
+   if (!(ret = calloc (1, sizeof *ret)))
+      return NULL;
+
+   ret->handle = handle;
+   ret->result = result;
+
+   return ret;
+}
 
 ezsql_t *ezsql_load (const char *plugin_so)
 {
@@ -59,6 +105,11 @@ ezsql_t *ezsql_load (const char *plugin_so)
    LOAD_SYMBOL (fptr_version, SYMB_VERSION);
    LOAD_SYMBOL (fptr_connect, SYMB_CONNECT);
    LOAD_SYMBOL (fptr_disconnect, SYMB_DISCONNECT);
+   LOAD_SYMBOL (fptr_last_errcode, SYMB_LAST_ERRCODE);
+   LOAD_SYMBOL (fptr_last_errmsg, SYMB_LAST_ERRMSG);
+   LOAD_SYMBOL (fptr_exec, SYMB_EXEC);
+   LOAD_SYMBOL (fptr_res_del, SYMB_EXEC);
+   LOAD_SYMBOL (fptr_res_bind, SYMB_RES_BIND);
 
 #undef LOAD_SYMBOL
 
@@ -80,6 +131,18 @@ void ezsql_unload (ezsql_t *handle)
       dlclose (handle->libh);
 
    free (handle);
+}
+
+int ezsql_last_errcode (ezsql_t *handle)
+{
+   return handle==NULL ? -1
+                       : handle->fptr_last_errcode (handle->dbconn);
+}
+
+const char *ezsql_last_errmsg (ezsql_t *handle)
+{
+   return handle==NULL ? "Handle is NULL"
+                       : handle->fptr_last_errmsg (handle->dbconn);
 }
 
 const char *ezsql_plugin_name (ezsql_t *handle)
@@ -110,3 +173,37 @@ void ezsql_disconnect (ezsql_t *handle)
 
    handle->fptr_disconnect (handle->dbconn);
 }
+
+ezsql_result_t *ezsql_exec (ezsql_t *handle, const char *stmt,
+                            size_t                nparams,
+                            enum ezsql_coltype_t *param_types,
+                            void                **params)
+{
+   if (!handle)
+      return NULL;
+
+   return res_new (handle,
+                   handle->fptr_exec (handle->dbconn,
+                                      stmt,
+                                      nparams,
+                                      param_types,
+                                      params));
+}
+
+void ezsql_res_del (ezsql_result_t *res)
+{
+   if (res)
+      res_del (res);
+}
+
+bool ezsql_res_bind (ezsql_result_t       *res,
+                     size_t                nfields,
+                     enum ezsql_coltype_t *field_types,
+                     void                **fields)
+{
+   if (!res)
+      return false;
+
+   return res->handle->fptr_res_bind (res, nfields, field_types, fields);
+}
+
