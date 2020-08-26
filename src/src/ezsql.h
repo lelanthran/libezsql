@@ -21,6 +21,8 @@ extern "C" {
                                          const char *ez_username, const char *ez_password,
                                          const char *ez_database);
 
+   void ezsql_disconnect (ezsql_t *handle);
+
 #ifdef __cplusplus
 };
 #endif

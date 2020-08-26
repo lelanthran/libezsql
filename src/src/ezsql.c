@@ -27,6 +27,10 @@ struct ezsql_t {
                           const char *ez_host, uint16_t ez_port,
                           const char *ez_username, const char *ez_password,
                           const char *ez_database);
+
+#define SYMB_DISCONNECT ("plugin_disconnect")
+   void (*fptr_disconnect) (void *handle);
+
 };
 
 ezsql_t *ezsql_load (const char *plugin_so)
@@ -54,6 +58,7 @@ ezsql_t *ezsql_load (const char *plugin_so)
    LOAD_SYMBOL (fptr_name, SYMB_NAME);
    LOAD_SYMBOL (fptr_version, SYMB_VERSION);
    LOAD_SYMBOL (fptr_connect, SYMB_CONNECT);
+   LOAD_SYMBOL (fptr_disconnect, SYMB_DISCONNECT);
 
 #undef LOAD_SYMBOL
 
@@ -98,4 +103,7 @@ void *ezsql_connect (ezsql_t *handle, const char *ez_path,
                                                  ez_database);
 }
 
-
+void ezsql_disconnect (ezsql_t *handle)
+{
+   handle->fptr_disconnect (handle->dbconn);
+}

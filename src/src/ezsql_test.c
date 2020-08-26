@@ -49,7 +49,8 @@ int main (int argc, char **argv)
 
    ret = EXIT_SUCCESS;
 
-errorexit:
+   errorexit:
+   ezsql_disconnect (handle);
    ezsql_unload (handle);
    return ret;
 }
