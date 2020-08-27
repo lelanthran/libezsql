@@ -64,13 +64,13 @@ static struct dummy_db_t *dummy_new (const char *path,
 
 int plugin_last_errcode (void *handle)
 {
-   PRINTF ("Returning dummy errcode\n");
+   PRINTF ("Returning dummy errcode [%p]\n", handle);
    return 42;
 }
 
 const char *plugin_last_errmsg (void *handle)
 {
-   PRINTF ("Returning dummy errmsg\n");
+   PRINTF ("Returning dummy errmsg [%p]\n", handle);
    return "So long, and thanks for all the fish!";
 }
 
@@ -104,7 +104,7 @@ void plugin_disconnect (void *handle)
 {
    struct dummy_db_t *tmp = handle;
 
-   PRINTF ("Disconnecting dummy database\n");
+   PRINTF ("Disconnecting dummy database [%p]\n", handle);
    dummy_del (tmp);
 }
 
@@ -113,12 +113,17 @@ void *plugin_exec (void *handle, const char            *stmt,
                                  enum ezsql_coltype_t  *param_types,
                                  void                 **params)
 {
-   PRINTF ("Returning handle to const char, as exec_result\n");
+   PRINTF ("Executing [%s] with %zu params at [%p][%p]\n", stmt,
+                                                           nparams,
+                                                           param_types,
+                                                           params);
+   PRINTF ("Returning handle to const char, as exec_result[%p]\n", handle);
+   return handle;
 }
 
 void plugin_res_del (void *result)
 {
-   PRINTF ("Deleting result_t handle\n");
+   PRINTF ("Deleting result_t handle [%p]\n", result);
 }
 
 bool plugin_res_bind (void *result, size_t                 nfields,
@@ -129,7 +134,8 @@ bool plugin_res_bind (void *result, size_t                 nfields,
    if (setnum < 0)
       return 0;
 
-   PRINTF ("Returning a row of results set [%i]\n", setnum);
+   PRINTF ("Binding %zu fields at [%p][%p]\n", nfields, field_types, fields);
+   PRINTF ("Returning a row of results set [%p][%i]\n", result, setnum);
    return setnum--;
 }
 

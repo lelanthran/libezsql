@@ -83,7 +83,7 @@ bool ezutil_parse_connection_string (const char *connstring)
       if (delim && *delim == 0)
          *delim = '=';
 
-      ezplatform_setenv (name, value, 1);
+      setenv (name, value, 1);
    }
 
    error = false;

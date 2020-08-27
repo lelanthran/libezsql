@@ -6,7 +6,11 @@
 extern "C" {
 #endif
 
-   int ezplatform_setenv (const char *name, const char *value, int overwrite);
+#ifdef PLATFORM_POSIX
+   int setenv (const char *name, const char *value, int overwrite);
+#else
+#error Specified platform not supported yet.
+#endif
 
 #ifdef __cplusplus
 };

@@ -3,6 +3,7 @@
 #define H_EZSQL
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct ezsql_t ezsql_t;
 typedef struct ezsql_result_t ezsql_result_t;
