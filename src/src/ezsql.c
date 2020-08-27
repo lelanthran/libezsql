@@ -43,13 +43,13 @@ struct ezsql_t {
                                       enum ezsql_coltype_t *param_types,
                                       void                **params);
 
-#define SYMB_RES_DEL ("plugin_res_del")
-   void (*fptr_res_del) (void *result);
-
 #define SYMB_RES_BIND ("plugin_res_bind")
    int (*fptr_res_bind) (void *result, size_t nfields,
                                        enum ezsql_coltype_t *field_types,
                                        void                **fields);
+
+#define SYMB_RES_DEL ("plugin_res_del")
+   void (*fptr_res_del) (void *result);
 
 };
 
@@ -108,8 +108,8 @@ ezsql_t *ezsql_load (const char *plugin_so)
    LOAD_SYMBOL (fptr_last_errcode, SYMB_LAST_ERRCODE);
    LOAD_SYMBOL (fptr_last_errmsg, SYMB_LAST_ERRMSG);
    LOAD_SYMBOL (fptr_exec, SYMB_EXEC);
-   LOAD_SYMBOL (fptr_res_del, SYMB_EXEC);
    LOAD_SYMBOL (fptr_res_bind, SYMB_RES_BIND);
+   LOAD_SYMBOL (fptr_res_del, SYMB_EXEC);
 
 #undef LOAD_SYMBOL
 
@@ -190,12 +190,6 @@ ezsql_result_t *ezsql_exec (ezsql_t *handle, const char *stmt,
                                       params));
 }
 
-void ezsql_res_del (ezsql_result_t *res)
-{
-   if (res)
-      res_del (res);
-}
-
 bool ezsql_res_bind (ezsql_result_t       *res,
                      size_t                nfields,
                      enum ezsql_coltype_t *field_types,
@@ -205,5 +199,11 @@ bool ezsql_res_bind (ezsql_result_t       *res,
       return false;
 
    return res->handle->fptr_res_bind (res, nfields, field_types, fields);
+}
+
+void ezsql_res_del (ezsql_result_t *res)
+{
+   if (res)
+      res_del (res);
 }
 

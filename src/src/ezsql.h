@@ -48,12 +48,12 @@ extern "C" {
                                enum ezsql_coltype_t *param_types,
                                void                **params);
 
-   void ezsql_res_del (ezsql_result_t *res);
-
    bool ezsql_res_bind (ezsql_result_t       *res,
                         size_t                nfields,
                         enum ezsql_coltype_t *field_types,
                         void                **fields);
+
+   void ezsql_res_del (ezsql_result_t *res);
 
 #ifdef __cplusplus
 };
